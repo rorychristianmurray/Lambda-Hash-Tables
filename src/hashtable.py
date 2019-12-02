@@ -12,7 +12,7 @@ class HashTable:
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
-    def __init__(self, capacity):
+    def __init__(self, capacity=8):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
