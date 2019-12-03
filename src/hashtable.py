@@ -52,55 +52,42 @@ class HashTable:
 
         Fill this in.
         '''
+        # hash the key and convert to index
         index = self._hash_mod(key) # get index within range
-        curr_item = self.storage[index]
-        pair = LinkedPair(key, value)
+        # get current value
+        curr_val = self.storage[index]
 
-        if curr_item is None:
-            self.storage[index] = pair
-            return
+        # if nothing currently indexed
+        if curr_val is None:
+            self.storage[index] = LinkedPair(key, value)
+        # if there is a collision
+        # add the new element to the linked list
+        elif curr_val.next is None:
+            curr_val.next = LinkedPair(key, value)
+        else: 
+            # if need to add to chain
+            # but chain is already longer
+            # or replace value
+            while curr_val.next is not None:
+                if curr_val.next.key == key:
+                    print(f"replacing key : {key} with value : {value}")
+                    curr_val.next.value = value
+                    return # short out of the if statement
+                else: # swap current value and move down chain
+                    curr_val = curr_val.next
+            # now we either replaced the value or 
+            # moved down the chain to where the next
+            # element in the linked list is none
+            curr_val.next = LinkedPair(key, value)
+
+        # # if there is a index collision
+        # if self.storage[index] is not None:
+        #     # handle collision here
+        #     self.storage[index] = LinkedPair(key, value)
+        #     self.storage[index].next = curr_val
+        #     print(f"ERROR: overwriting data at {index}")
         
-        elif curr_item.next is None:
-            curr_item.next = pair
-            return
-        
-        else:
-            while curr_item.next is not None:
-                if curr_item.next.key == key:
-                    print(f"Swapping out value of key : {key} with new value : {value}")
-                    curr_item.next.value = value
-                    return
-                else:
-                    curr_item = curr_item.next
-            curr_item.next = pair
-
-
-
-
-
-
-        # # check storage capacity
-        # if self.count >= self.capacity:
-        #     print("ERROR Will Robinson: over capacity")
-        #     # if over capacity, resize
-        #     self.resize()
-        
-        # if index > self.count:
-        #     print("ERROR: out of range")
-        #     return
-
-        # # check if index is occupied
-        # if self.storage[index] is None:
-        #     # if not occupied then add as value
-        #     self.storage[index] = pair
-        # else: 
-        #     # if occupied add as next in linked list
-        #     pair.next = self.storage[index]
-        #     self.storage[index] = pair
-        
-        # # increment count by 1
-        # self.count += 1
-    
+        # self.storage[index] = LinkedPair(key, value)
 
 
 
@@ -115,17 +102,10 @@ class HashTable:
         index = self._hash_mod(key)
 
         if self.storage[index] is None:
-            print("Nothing there to delete")
+            print("Key not found")
             return
-        else:
-            curr_pair = self.storage[index]
-            while curr_pair is not None:
-                if curr_pair.key == key:
-                    self.storage[index] = curr_pair.next
-                # swap
-                curr_pair = curr_pair.next
-            return
-            
+
+        self.storage[index] = None
 
 
     def retrieve(self, key):
@@ -137,17 +117,33 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
+        curr_val = self.storage[index]
 
-        if self.storage[index] is None:
+        # if nothing at curr_val index
+        if curr_val is None:
+            print(f"No value at key {key}")
             return None
-
+        # traverse linked list
         else:
-            curr_pair = self.storage[index]
-            while curr_pair is not None:
-                if curr_pair.key == key:
-                    return curr_pair.value
-                curr_pair = curr_pair.next
-            return None
+            while curr_val.next is not None:
+                # look for key
+                if curr_val.key is key:
+                    print(f"value of key {key} is value {curr_val.value}")
+                    return curr_val.value
+                else: # swap and keep moving through linked list
+                    curr_val = curr_val.next
+            # at end of linked list, return value
+            return curr_val.value
+
+
+        # if self.storage[index] is not None:
+        #     if self.storage[index].key == key:
+        #         return self.storage[index].value
+        #     else:
+        #         print(f"WARNING: key doesnt match")
+        #         return None
+        # else:
+        #     return None
 
 
     def resize(self):
@@ -157,25 +153,37 @@ class HashTable:
 
         Fill this in.
         '''
-        # cache storage
-        prev_storage = self.storage
 
-        # double size
+        # increase capacity
         self.capacity *= 2
 
-        # create new storage
+        # create new storage with larger capacity
         new_storage = [None] * self.capacity
 
-        # iterate over cached storage and insert into new storage
+        # make a copy of prev storage
+        prev_storage = self.storage
+
+        # set storage as new_storage
+        self.storage = new_storage
+
+        # go through existing and old storage
+        # and rehash all keys
+        # traverse linked list
+
         for i in range(len(prev_storage)):
+            # check item at each index
             if prev_storage[i] is not None:
-                curr_item = prev_storage[i]
-                while curr_item:
-                    self.insert(curr_item.key, curr_item.value)
-                    curr_item = curr_item.next
+                # if exists add it to a list
+                curr_items = prev_storage[i]
+                while curr_items:
+                    self.insert(curr_items.key, curr_items.value)
+                    curr_items = curr_items.next
 
 
-
+        # for bucket_item in self.storage:
+        #     if bucket_item is not None:
+        #         new_index = self._hash_mod(bucket_item.key)
+        #         new_storage[new_index] = LinkedPair(bucket_item.key, bucket_item.value)
 
 
 
