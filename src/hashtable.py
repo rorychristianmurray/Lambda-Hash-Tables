@@ -56,6 +56,39 @@ class HashTable:
         index = self._hash_mod(key) # get index within range
         # get current value
         curr_val = self.storage[index]
+        node = LinkedPair(key, value)
+
+        if curr_val is not None and curr_val.key is key:
+            curr_val.value = value
+            return
+        else:
+            node.next = self.storage[index]
+            self.storage[index] = node
+
+
+        
+
+
+        # if curr_val is not None and curr_val.key is not key:
+        #     node = curr_val
+        #     # check if key matches, otherwise 
+        #     # traverse through list
+        #     # traverse to end and then insert
+        #     while curr_val.next is not None:
+        #         if curr_val.next.key == key:
+        #             print(f"replacing key : {key} with value : {value}")
+        #             curr_val.next.value = value
+        #             return # short out of the if statement
+        #         else: # swap current value and move down chain
+        #             curr_val = curr_val.next
+                
+
+
+
+        #     # overwrite value
+        #     curr_val.value = value
+
+
 
         # if nothing currently indexed
         if curr_val is None:
@@ -79,15 +112,6 @@ class HashTable:
             # moved down the chain to where the next
             # element in the linked list is none
             curr_val.next = LinkedPair(key, value)
-
-        # # if there is a index collision
-        # if self.storage[index] is not None:
-        #     # handle collision here
-        #     self.storage[index] = LinkedPair(key, value)
-        #     self.storage[index].next = curr_val
-        #     print(f"ERROR: overwriting data at {index}")
-        
-        # self.storage[index] = LinkedPair(key, value)
 
 
 
